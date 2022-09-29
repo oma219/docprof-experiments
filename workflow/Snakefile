@@ -1,0 +1,36 @@
+##################################################
+# Name: Snakefile
+# Description: Main workflow for Document Array
+#              Profile experiments
+# Date: September 13, 2022
+##################################################
+
+configfile: "config/config.yaml"
+
+import glob
+import os
+import shutil
+import random
+
+# variables from config file
+exp_type = config["EXP_TYPE"]
+pbsim_model = config["PBSIM_MODEL"]
+repo_dir = config["REPO_DIRECTORY"]
+r_dir = config["RINDEX_BUILD_DIRECTORY"]
+base_dir = config["DATA_ROOT"]
+
+num_datasets_exp1 = config["NUM_DATASETS_EXP1"]
+mem_count_exp1 = config["MEM_COUNT_EXP1"]
+thresh_exp1 = config["THRESHOLD_EXP1"]
+
+###############################################################################
+# IMPORTANT: Sets the working directory based on configuration parameter, and 
+#            it can be set on command-line using --config DATA_ROOT=""
+###############################################################################
+workdir: config["DATA_ROOT"]
+
+###############################################################################
+# Imports rules for each type of experiment
+###############################################################################
+
+include: "rules/exp_1.smk"

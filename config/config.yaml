@@ -1,0 +1,8 @@
+DATA_ROOT: "/home/oahmed6/scr4_blangme2/oahmed/doc_array/exp_1"
+EXP_TYPE: 1
+REPO_DIRECTORY: "/home/oahmed6/docprof-experiments"
+PBSIM_MODEL: "/home/oahmed6/pbsim2/data/R95.model"
+RINDEX_BUILD_DIRECTORY: "/home/oahmed6/r-index_dev/build"
+NUM_DATASETS_EXP1: 4
+THRESHOLD_EXP1: 15
+MEM_COUNT_EXP1: 1000000
