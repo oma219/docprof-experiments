@@ -18,10 +18,16 @@ pbsim_model = config["PBSIM_MODEL"]
 repo_dir = config["REPO_DIRECTORY"]
 r_dir = config["RINDEX_BUILD_DIRECTORY"]
 base_dir = config["DATA_ROOT"]
+time_prog = config["TIME_PROG"]
+time_format = config["TIME_FORMAT"]
 
 num_datasets_exp1 = config["NUM_DATASETS_EXP1"]
 mem_count_exp1 = config["MEM_COUNT_EXP1"]
 thresh_exp1 = config["THRESHOLD_EXP1"]
+
+num_datasets_exp2 = config["NUM_DATASETS_EXP2"]
+mem_count_exp2 = config["MEM_COUNT_EXP2"]
+thresh_exp2 = config["THRESHOLD_EXP2"]
 
 ###############################################################################
 # IMPORTANT: Sets the working directory based on configuration parameter, and 
@@ -34,3 +40,4 @@ workdir: config["DATA_ROOT"]
 ###############################################################################
 
 include: "rules/exp_1.smk"
+include: "rules/exp_2.smk"
