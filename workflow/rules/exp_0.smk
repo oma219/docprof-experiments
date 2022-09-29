@@ -1,5 +1,5 @@
 ###############################################################
-# Name: exp_1.smk
+# Name: exp_0.smk
 # Description: Contains functions and rules for
 #              the type of experiment type 1:
 # 
