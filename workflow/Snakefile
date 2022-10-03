@@ -41,3 +41,13 @@ workdir: config["DATA_ROOT"]
 
 include: "rules/exp_1.smk"
 include: "rules/exp_2.smk"
+
+
+###############################################################################
+# All rules for each experiment
+###############################################################################
+
+# Experiment 1
+rule all:
+    input:
+        expand("exp1_output_data/{mem_type}/{read_type}/pivot_{num}/output.txt", mem_type=['mems'], read_type=['ont'], num=[1,2,3,4])

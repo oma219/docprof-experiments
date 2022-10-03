@@ -250,7 +250,7 @@ rule build_doc_array_profiles_for_full_database_exp1:
 
 rule determined_doc_array_listings_for_mems_exp1:
     input:
-        "exp1_indexes/docprofiles_index/full_ref.fna",
+        "exp1_indexes/docprofiles_index/full_ref.fna.sdap",
         "exp1_{mem_type}_data/{read_type}/pivot_{pivot}.fastq"
     output:
         "exp1_doclistings/{mem_type}/{read_type}/pivot_{pivot}.fastq",
