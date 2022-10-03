@@ -62,7 +62,7 @@ def main(args):
                 line_split = line.split()
                 assert len(line_split) == 2, "Issue with doclisting result"
 
-                curr_doclist = [int(x) for x in line_split[1][1:-2].split(",")]
+                curr_doclist = [int(x) for x in line_split[1][1:-1].split(",") if x is not '']
                 doclist_dict[curr_name] = curr_doclist
     
     # Verify for each read the document listings are equalivant
