@@ -48,6 +48,11 @@ include: "rules/exp_2.smk"
 ###############################################################################
 
 # Experiment 1
+#rule all:
+#    input:
+#        expand("exp1_output_data/{mem_type}/{read_type}/pivot_{num}/output.txt", mem_type=['mems'], read_type=['ont'], num=[1,2,3,4])
+
+# Experiment 2
 rule all:
     input:
-        expand("exp1_output_data/{mem_type}/{read_type}/pivot_{num}/output.txt", mem_type=['mems'], read_type=['ont'], num=[1,2,3,4])
+        expand("exp2_final_output/{mem_type}/{read_type}/output.csv", mem_type=['mems'], read_type=['ont'])
