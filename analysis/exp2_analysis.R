@@ -30,10 +30,10 @@ make_comparison_plot <- function(total_df) {
                 axis.title.y=element_text(size=10),
                 legend.position = "right", 
                 #legend.position = c(0.6, 0.8),
-                legend.text=element_text(size=6),
+                legend.text=element_text(size=10),
                 legend.box="vertical",
                 legend.background = element_rect(size=0.5, linetype="solid", colour ="black"),
-                legend.title=element_text(size=6, face="bold"),
+                legend.title=element_text(size=10, face="bold"),
                 axis.text=element_text(size=10, color="black")) +
           #guides(shape=guide_legend(override.aes=list(size = 0.5))) +
           scale_y_continuous(breaks=seq(0, 200, 20)) +
