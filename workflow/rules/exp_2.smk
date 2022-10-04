@@ -88,14 +88,14 @@ def all_relevant_log_files_exp2(wildcards):
     # Add files for doclist approach
     for i in range(1, num_datasets_exp2+1):
         input_files.append("exp2_results/doc_lists/{}/{}/pivot_{}.fastq.listings.log".format(wildcards.mem_type, wildcards.read_type, i))
-    input_files.append("exp2_indexes/docprofiles_index/full_ref.fna.sdap")
-    input_files.append("exp2_indexes/docprofiles_index/full_ref.fna.edap")
+    input_files.append("exp2_results/doc_lists/{}/{}/pivot_{}.docprofiles.bwt".format(wildcards.mem_type, wildcards.read_type, 1))
+    input_files.append("exp2_results/doc_lists/{}/{}/pivot_{}.docprofiles".format(wildcards.mem_type, wildcards.read_type, 1))
 
     # Add files for doclist_optimize approach
     for i in range(1, num_datasets_exp2+1):
         input_files.append("exp2_results/doc_lists/{}/{}/pivot_{}_optimize.fastq.listings.log".format(wildcards.mem_type, wildcards.read_type, i))
-    input_files.append("exp2_results/doc_lists/{}/{}/pivot_{}.docprofiles".format(wildcards.mem_type, wildcards.read_type, 1))
-    input_files.append("exp2_results/doc_lists/{}/{}/pivot_{}.docprofiles.bwt".format(wildcards.mem_type, wildcards.read_type, 1))
+    input_files.append("exp2_results/doc_lists/{}/{}/pivot_{}_optimize.docprofiles".format(wildcards.mem_type, wildcards.read_type, 1))
+    input_files.append("exp2_results/doc_lists/{}/{}/pivot_{}_optimize.docprofiles.bwt".format(wildcards.mem_type, wildcards.read_type, 1))
 
     # Add files for rindex approach
     for i in range(1, num_datasets_exp2+1):
@@ -268,16 +268,20 @@ rule determine_doc_array_listings_for_mems_exp2:
         "exp2_results/doc_lists/{mem_type}/{read_type}/pivot_{pivot}.fastq.listings.log",
         "exp2_results/doc_lists/{mem_type}/{read_type}/pivot_{pivot}_optimize.fastq.listings.log",
         "exp2_results/doc_lists/{mem_type}/{read_type}/pivot_{pivot}.docprofiles.bwt",
-        "exp2_results/doc_lists/{mem_type}/{read_type}/pivot_{pivot}.docprofiles"
+        "exp2_results/doc_lists/{mem_type}/{read_type}/pivot_{pivot}.docprofiles",
+        "exp2_results/doc_lists/{mem_type}/{read_type}/pivot_{pivot}_optimize.docprofiles.bwt",
+        "exp2_results/doc_lists/{mem_type}/{read_type}/pivot_{pivot}_optimize.docprofiles"
     shell:
         """
         cp {input[1]} {output[0]}
-        {time_prog} {time_format} --output={output[3]} pfp_doc run -r exp2_indexes/docprofiles_index/full_ref -p {output[0]} 2> {output[2]}.log
-        cp {input[1]} {output[1]}
-        {time_prog} {time_format} --output={output[5]} pfp_doc run -r exp2_indexes/docprofiles_index/full_ref -p {output[1]} -s -l 150 2> {output[4]}.log
-       
+        {time_prog} {time_format} --output={output[3]} pfp_doc run -r exp2_indexes/docprofiles_index/full_ref -p {output[0]} -s 2> {output[2]}.log
         cp exp2_indexes/docprofiles_index/full_ref.fna.docprofiles.bwt {output[8]}
         cp exp2_indexes/docprofiles_index/full_ref.fna.docprofiles {output[9]}
+
+        cp {input[1]} {output[1]}
+        {time_prog} {time_format} --output={output[5]} pfp_doc run -r exp2_indexes/docprofiles_index/full_ref -p {output[1]} -s -l 150 2> {output[4]}.log
+        cp exp2_indexes/docprofiles_index/full_ref.fna.docprofiles.bwt {output[10]}
+        cp exp2_indexes/docprofiles_index/full_ref.fna.docprofiles {output[11]}
         """
 
 rule align_pivot_against_rindex_of_database_exp2:
