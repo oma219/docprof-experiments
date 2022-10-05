@@ -29,6 +29,9 @@ num_datasets_exp2 = config["NUM_DATASETS_EXP2"]
 mem_count_exp2 = config["MEM_COUNT_EXP2"]
 thresh_exp2 = config["THRESHOLD_EXP2"]
 
+num_gene_classes_exp3 = config["NUM_GENE_CLASSES_EXP3"]
+reads_per_class_exp3 = config["READS_PER_CLASS_EXP3"]
+
 ###############################################################################
 # IMPORTANT: Sets the working directory based on configuration parameter, and 
 #            it can be set on command-line using --config DATA_ROOT=""
@@ -41,18 +44,24 @@ workdir: config["DATA_ROOT"]
 
 include: "rules/exp_1.smk"
 include: "rules/exp_2.smk"
-
+include: "rules/exp_3.smk"
 
 ###############################################################################
 # All rules for each experiment
 ###############################################################################
 
 # Experiment 1
-#rule all:
-#    input:
-#        expand("exp1_output_data/{mem_type}/{read_type}/pivot_{num}/output.txt", mem_type=['mems'], read_type=['ont'], num=[1,2,3,4])
+# rule all:
+#     input:
+#         expand("exp1_output_data/{mem_type}/{read_type}/pivot_{num}/output.txt", mem_type=['mems'], read_type=['ont'], num=[1,2,3,4])
 
 # Experiment 2
+# rule all:
+#     input:
+#         expand("exp2_final_output/{mem_type}/{read_type}/output.csv", mem_type=['mems'], read_type=['ont'])
+
+# Experiment 3:
 rule all:
     input:
-        expand("exp2_final_output/{mem_type}/{read_type}/output.csv", mem_type=['mems'], read_type=['ont'])
+        "exp3_gene_data/raw_seq/class_1.fna"
+
