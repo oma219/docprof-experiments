@@ -14,8 +14,8 @@ library(data.table)
 # IMPORTANT: Experiment-dependent variables below, need to be set ...
 ########################################################################
 
-data_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_2/trial_1/data/"
-plots_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_2/trial_1/plots/"
+data_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_2/trial_2/data/"
+plots_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_2/trial_2/plots/"
 
 ########################################################################
 # Methods for plots ...
@@ -36,8 +36,8 @@ make_comparison_plot <- function(total_df) {
                 legend.title=element_text(size=10, face="bold"),
                 axis.text=element_text(size=10, color="black")) +
           #guides(shape=guide_legend(override.aes=list(size = 0.5))) +
-          scale_y_continuous(breaks=seq(0, 200, 20)) +
-          scale_x_continuous(breaks=seq(0, 5, 0.5)) +
+          scale_y_continuous(breaks=seq(0, 400, 50)) +
+          scale_x_continuous(breaks=seq(0, 8, 1)) +
           scale_color_discrete(name="Number of Classes:", labels=c("3", "5", "8")) +
           scale_shape_discrete(name="Approach:", labels=c("Doc. Array", "Doc. Array (optimized)", "r-index")) +
           labs(x="Index Size (GB)",
