@@ -29,12 +29,14 @@ def main(args):
                     gene_reads.append(read)
                     read = ["", ""]
 
-        print(f"[log] For class {class_num}, there were {len(gene_reads)} reads found.")
+        print(f"[log] For class {class_num}, there were {len(gene_reads)} gene reads found.")
 
         # Iterate through the bacteria reads and output chimeras of the two
         start_pos = (class_num - 1) * args.num_reads_per_class
         end_pos = class_num * args.num_reads_per_class
+        
         out_fd = open(args.output_dir + f"class_{class_num}_reads.fna", "w")
+        output_ratio = [0, 0]
 
         with open(args.input_reads, "r") as input_fd:
             header = ""
@@ -49,12 +51,14 @@ def main(args):
                     if pos >= start_pos and pos < end_pos:
                         random_gene = random.choice(gene_reads)[1]
                         out_fd.write(f"{header}\n{seq}{random_gene}\n")
+                        output_ratio[0] += len(seq)
+                        output_ratio[1] += len(random_gene)
                     elif pos >= end_pos:
                         break
                     pos += 1
         out_fd.close()
-        print(f"[log] For class {class_num}, reads from pos={start_pos} to pos={end_pos} were used.")
-
+        print(f"[log] For class {class_num}, bacterial reads from pos={start_pos} to pos={end_pos} were used.")
+        print(f"[log] For class {class_num}, {output_ratio[0]/sum(output_ratio): .3f}% is bacteria, {output_ratio[1]/sum(output_ratio): .3f}% is gene\n")
 
 def parse_arguments():
     """ Defines the command-line argument parser, and return arguments """

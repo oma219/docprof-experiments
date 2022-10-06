@@ -63,5 +63,6 @@ include: "rules/exp_3.smk"
 # Experiment 3:
 rule all:
     input:
-        "exp3_gene_data/raw_seq/class_1.fna"
+        "exp3_results/doclist/csv_files/classification_results.csv",
+        "exp3_results/spumoni/csv_files/classification_results.csv"
 
