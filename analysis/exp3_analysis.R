@@ -17,8 +17,8 @@ library(tidyr)
 # IMPORTANT: Experiment-dependent variables below, need to be set ...
 ########################################################################
 
-data_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_3/trial_1/data/"
-plots_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_3/trial_1/plots/"
+data_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_3/trial_2/data/"
+plots_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_3/trial_2/plots/"
 
 ########################################################################
 # Methods for plots ...
