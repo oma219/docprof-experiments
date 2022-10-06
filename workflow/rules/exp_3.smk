@@ -65,7 +65,7 @@ rule generate_long_reads_from_bacteria_exp3:
         "exp3_bacteria_reads/raw_reads/all_classes.fna"
     shell:
         """
-        pbsim --depth 10.0 --prefix exp3_bacteria_reads/raw_reads/all_classes \
+        pbsim --depth 100.0 --prefix exp3_bacteria_reads/raw_reads/all_classes \
         --hmm_model {pbsim_model} --accuracy-mean 0.95 --length-min 900 --length-max 1100 {input}
         
         cat 'exp3_bacteria_reads/raw_reads/all_classes'*.fastq > exp3_bacteria_reads/raw_reads/all_classes.fastq
