@@ -14,17 +14,19 @@ library(data.table)
 # IMPORTANT: Experiment-dependent variables below, need to be set ...
 ########################################################################
 
-data_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_2/trial_2/data/"
-plots_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_2/trial_2/plots/"
+data_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_2/trial_3/data/"
+plots_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_2/trial_3/plots/"
 
 ########################################################################
 # Methods for plots ...
 ########################################################################
 
 make_comparison_plot <- function(total_df) {
+  facet.labs <- c("100"="100 genomes (+/- 5)", "300"="300 genomes (+/- 5)", "30"="30 genomes (+/- 5)")
   plot <- ggplot(data=total_df, aes(x=indexsize/1073741824, y= time)) +
           geom_point(aes(color=as.factor(numclasses), shape=approach), size=3.0) + 
           theme_bw() +
+          facet_wrap(~numgenomes, labeller=labeller(numgenomes=facet.labs)) +
           theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
                 axis.title.x=element_text(size=10),
                 axis.title.y=element_text(size=10),
@@ -67,4 +69,4 @@ plot_1 <- make_comparison_plot(merge_df)
 plot_1
 
 output_name <- paste(plots_folder, "comparison_plot.jpeg", sep="")
-ggsave(output_name, plot=plot_1, dpi=800, device="jpeg", width=6, height=4)
+ggsave(output_name, plot=plot_1, dpi=800, device="jpeg", width=8, height=4)
