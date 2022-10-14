@@ -28,17 +28,18 @@ make_comparison_plot <- function(total_df) {
           theme_bw() +
           facet_wrap(~numgenomes, labeller=labeller(numgenomes=facet.labs)) +
           theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
-                axis.title.x=element_text(size=10),
-                axis.title.y=element_text(size=10),
+                strip.text=element_text(face="bold", size=12),
+                axis.title.x=element_text(size=12),
+                axis.title.y=element_text(size=12),
                 legend.position = "right", 
                 #legend.position = c(0.6, 0.8),
-                legend.text=element_text(size=10),
+                legend.text=element_text(size=12),
                 legend.box="vertical",
                 legend.background = element_rect(size=0.5, linetype="solid", colour ="black"),
-                legend.title=element_text(size=10, face="bold"),
+                legend.title=element_text(size=12, face="bold"),
                 axis.text=element_text(size=10, color="black")) +
           #guides(shape=guide_legend(override.aes=list(size = 0.5))) +
-          scale_y_continuous(breaks=seq(0, 400, 50)) +
+          scale_y_continuous(breaks=seq(0, 400, 50), limits=c(0, 400)) +
           scale_x_continuous(breaks=seq(0, 8, 1)) +
           scale_color_discrete(name="Number of Classes:", labels=c("3", "5", "8")) +
           scale_shape_discrete(name="Approach:", labels=c("Doc. Array", "Doc. Array (optimized)", "r-index")) +
@@ -68,5 +69,5 @@ merge_df <- Reduce(function(x, y) merge(x, y, all=TRUE), df_list)
 plot_1 <- make_comparison_plot(merge_df)
 plot_1
 
-output_name <- paste(plots_folder, "comparison_plot.jpeg", sep="")
-ggsave(output_name, plot=plot_1, dpi=800, device="jpeg", width=8, height=4)
+output_name <- paste(plots_folder, "query_comparison_plot.pdf", sep="")
+ggsave(output_name, plot=plot_1, dpi=800, device="pdf", width=10, height=4)
