@@ -40,6 +40,9 @@ num_reads_per_class_exp5 = config["NUM_READS_PER_CLASS_EXP5"]
 num_classes_exp6 = config["NUM_CLASSES_EXP6"]
 num_strains_exp6 = config["NUM_STRAINS_EXP6"]
 
+num_classes_exp7 = config["NUM_CLASSES_EXP7"]
+dataset_name_exp7 = config["DATASET_NAME_EXP7"]
+
 ###############################################################################
 # IMPORTANT: Sets the working directory based on configuration parameter, and 
 #            it can be set on command-line using --config DATA_ROOT=""
@@ -56,6 +59,7 @@ include: "rules/exp_3.smk"
 include: "rules/exp_4.smk"
 include: "rules/exp_5.smk"
 include: "rules/exp_6.smk"
+include: "rules/exp_7.smk"
 
 ###############################################################################
 # All rules for each experiment
