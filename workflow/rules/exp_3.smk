@@ -232,7 +232,8 @@ rule determine_doc_array_listings_for_mems_exp3:
 
 rule classify_spumoni_reads_exp3:
     input:
-        expand("exp3_results/spumoni/ms_results/class_{num}_reads.fna.doc_numbers", num=range(1, num_gene_classes_exp3+1))
+        expand("exp3_results/spumoni/ms_results/class_{num}_reads.fna.doc_numbers", num=range(1, num_gene_classes_exp3+1)),
+        expand("exp3_results/spumoni/ms_results/class_{num}_reads.fna.lengths", num=range(1, num_gene_classes_exp3+1))
     output:
         "exp3_results/spumoni/csv_files/classification_results.csv"
     run:
@@ -254,20 +255,25 @@ rule classify_spumoni_reads_exp3:
                 accuracies.append([pivot,tp,tn,fp,fn])
             return accuracies
 
-        def get_class_counts_for_read(doc_list):
+        def get_class_counts_for_read(doc_list, length_list):
             """ Takes in document labels for read and return counts """
+            assert len(doc_list) == len(length_list), "mismatch in list lengths!"
             counts = [0 for i in range(num_gene_classes_exp3)]
-            for doc_num in doc_list:
-                counts[doc_num] += 1
+
+            prev_length = -1
+            for doc_num, length_num in zip(doc_list, length_list):
+                if length_num >= 15 and length_num >= prev_length:
+                    counts[doc_num] += length_num
+                prev_length = length_num
             return counts
         
         confusion_matrix = [[0 for x in range(num_gene_classes_exp3)] for i in range(num_gene_classes_exp3)]
         
-        for class_num, input_file in enumerate(input):
-            with open(input_file, "r") as input_fd:
-                for line in input_fd:
+        for class_num, input_file in enumerate(input[:num_gene_classes_exp3]):
+            with open(input_file, "r") as input_fd, open(input[class_num+num_gene_classes_exp3], "r") as lengths_fd:
+                for line, length_line in zip(input_fd, lengths_fd):
                     if '>' not in line:
-                        counts = get_class_counts_for_read([int(x) for x in line.split()])
+                        counts = get_class_counts_for_read([int(x) for x in line.split()], [int(x) for x in length_line.split()])
                         max_count = max(counts)
                         pred_class = counts.index(max_count)
                         confusion_matrix[class_num][pred_class] += 1

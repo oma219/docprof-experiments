@@ -32,6 +32,14 @@ thresh_exp2 = config["THRESHOLD_EXP2"]
 num_gene_classes_exp3 = config["NUM_GENE_CLASSES_EXP3"]
 reads_per_class_exp3 = config["READS_PER_CLASS_EXP3"]
 
+num_classes_exp4 = config["NUM_CLASSES_EXP4"]
+
+num_classes_exp5 = config["NUM_CLASSES_EXP5"]
+num_reads_per_class_exp5 = config["NUM_READS_PER_CLASS_EXP5"]
+
+num_classes_exp6 = config["NUM_CLASSES_EXP6"]
+num_strains_exp6 = config["NUM_STRAINS_EXP6"]
+
 ###############################################################################
 # IMPORTANT: Sets the working directory based on configuration parameter, and 
 #            it can be set on command-line using --config DATA_ROOT=""
@@ -45,6 +53,9 @@ workdir: config["DATA_ROOT"]
 include: "rules/exp_1.smk"
 include: "rules/exp_2.smk"
 include: "rules/exp_3.smk"
+include: "rules/exp_4.smk"
+include: "rules/exp_5.smk"
+include: "rules/exp_6.smk"
 
 ###############################################################################
 # All rules for each experiment
@@ -61,8 +72,25 @@ include: "rules/exp_3.smk"
 #         expand("exp2_final_output/{mem_type}/{read_type}/output.csv", mem_type=['mems'], read_type=['ont'])
 
 # Experiment 3:
+# rule all:
+#     input:
+#         "exp3_results/doclist/csv_files/classification_results.csv",
+#         "exp3_results/spumoni/csv_files/classification_results.csv"
+
+# Experiment 4:
+# rule all:
+#     input:
+#         expand("exp4_results/doclist/listings/class_{num}_reads.fastq.listings", num=range(2, 9))
+
+# Experiment 5:
+# rule all:
+#     input:
+#         "exp5_results/doclist/csv_files/classification_results.csv",
+#         "exp5_results/spumoni/csv_files/classification_results.csv"
+
+# Experiment 6:
 rule all:
     input:
-        "exp3_results/doclist/csv_files/classification_results.csv",
-        "exp3_results/spumoni/csv_files/classification_results.csv"
+        "exp6_final_results/spumoni.csv",
+        "exp6_final_results/doclist.csv"
 
