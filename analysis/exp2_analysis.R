@@ -22,7 +22,7 @@ plots_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_2
 ########################################################################
 
 make_comparison_plot <- function(total_df) {
-  facet.labs <- c("100"="100 genomes (+/- 5)", "300"="300 genomes (+/- 5)", "30"="30 genomes (+/- 5)")
+  facet.labs <- c("100"="100+", "300"="300+", "30"="30+")
   plot <- ggplot(data=total_df, aes(x=indexsize/1073741824, y= time)) +
           geom_point(aes(color=as.factor(numclasses), shape=approach), size=3.0) + 
           theme_bw() +
