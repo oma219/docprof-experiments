@@ -77,7 +77,7 @@ plot <- make_grouped_bar_chart(merge_df)
 plot
 
 output_name <- paste(plots_folder, "real_classification_test.pdf", sep="")
-ggsave(output_name, plot=plot, dpi=800, device="pdf", width=8, height=5)
+ggsave(output_name, plot=plot, dpi=800, device="pdf", width=9, height=4)
 
 
 
