@@ -1,12 +1,11 @@
 # Experiments related to Document Array Profiles
 
-
 ### Experiment 1: Compare listings to access correctness of data-structure
 
 - This experiment is aimed at making sure that the document array profiles data-structure is computing the correct listings. To do this, I
 compare the listings produced by the data-structure versus those using the $r$-index.
 
-### Experiment 2: Compare the query time and index size to the the $r$-index
+### Experiment 2: Compare the query time and index size to the the $r$-index :rotating_light: (Used in Paper) :rotating_light:
 
 - This experiment simulates reads, extracts MEMs and computes the listings using the $r$-index and the document array profiles. It compares the
 query time and index size for each data-structure.
@@ -20,3 +19,15 @@ We compare the results from using SPUMONI 2's sampled document array to using th
 
 - This experiment uses real nanopore mock community reads, we split the reads into seperate classes, and attempt to classify using both SPUMONI 2
 and the document array profiles.
+
+### Experiment 5: Assess read classification of on any general dataset :rotating_light: (Used in Paper) :rotating_light:
+
+- This experiment is a general experiment that simulates reads from different datasets and performs classification using SPUMONI 2 and the document array profiles.
+
+### Experiment 6: Assess strain-level classification based on real mock community reads :rotating_light: (Used in Paper) :rotating_light:
+
+- This experiment takes the real nanopore reads from a dataset, and performs strain-level classificaton for each bacterial species.
+
+### Experiment 7: Computes sequence homology across different datasets using ANI :rotating_light: (Used in Paper) :rotating_light:
+
+- Takes in a dataset, computes all-pairs ANI values across datasets and summarize in csv file
