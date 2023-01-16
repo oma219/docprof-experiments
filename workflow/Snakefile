@@ -60,6 +60,7 @@ include: "rules/exp_4.smk"
 include: "rules/exp_5.smk"
 include: "rules/exp_6.smk"
 include: "rules/exp_7.smk"
+include: "rules/exp_8.smk"
 
 ###############################################################################
 # All rules for each experiment

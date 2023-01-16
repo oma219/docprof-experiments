@@ -54,7 +54,18 @@ def compute_increases_per_profile(profile_list, direction):
                 increases+=1
         increase_list.append(increases)
     return increase_list   
-        
+
+def compute_sig_lcps_per_profile(all_profiles):
+    """ Find the number of significant lcps (>15) in each profile """
+    sig_list = []
+    for profile in all_profiles:
+        count = 0
+        for val in profile:
+            if val >= 15:
+                count += 1
+        sig_list.append(count)
+    return sig_list
+
 def main(args):
     """ analyze the document array profiles """
     
@@ -79,7 +90,11 @@ def main(args):
     end_profiles_right_increases = compute_increases_per_profile(end_mono_profiles_right, "right")
     print("[log] computed the number of monotonic increases for each profile.")
 
-    # Step 4: Plot the data ...
+    # Step 4: Analyze the number of significant lcps at each profile
+    start_profiles_sig_lcps = compute_sig_lcps_per_profile(start_profiles)
+    end_profiles_sig_lcps = compute_sig_lcps_per_profile(end_profiles)
+
+    # Step 5: Plot the data ...
 
     # Plot 1: Look at the monotonic increases
     plt.figure(figsize=(10, 10))
@@ -155,6 +170,7 @@ def main(args):
     plt.xlabel("Number of Increases in LCP")
     plt.ylabel("Density")
     plt.title("Start of Run Profiles - Left to Right")
+    plt.xlim([0, 10])
 
     plt.hist(start_profiles_left_increases, density=True)
 
@@ -163,6 +179,7 @@ def main(args):
     plt.xlabel("Number of Increases in LCP")
     plt.ylabel("Density")
     plt.title("Start of Run Profiles - Right to Left")
+    plt.xlim([0, 10])
 
     plt.hist(start_profiles_right_increases, density=True)
 
@@ -171,6 +188,7 @@ def main(args):
     plt.xlabel("Number of Increases in LCP")
     plt.ylabel("Density")
     plt.title("End of Run Profiles - Left to Right")
+    plt.xlim([0, 10])
 
     plt.hist(end_profiles_left_increases, density=True)
 
@@ -179,13 +197,34 @@ def main(args):
     plt.xlabel("Number of Increases in LCP")
     plt.ylabel("Density")
     plt.title("End of Run Profiles - Right to Left")
+    plt.xlim([0, 10])
 
     plt.hist(end_profiles_right_increases, density=True)
 
     plt.savefig(args.input_prefix+".monotonic_increases_plot.png", dpi=800, bbox_inches="tight")
     print("[log] plotted the monotonic increases distributions of 1000 profiles.")
 
+    # Plot 3: Look at the amount of significant lcps
+    plt.figure(figsize=(10, 5))
 
+    ## Sub-plot 1: Start of run profiles
+    plt.subplot(1, 2, 1)
+    plt.xlabel("Number of Significant LCPs (>15)")
+    plt.ylabel("Density")
+    plt.title("Start of Run Profiles")
+
+    plt.hist(start_profiles_sig_lcps, density=True)
+
+    ## Sub-plot 2: End of run profiles
+    plt.subplot(1, 2, 2)
+    plt.xlabel("Number of Significant LCPs (>15)")
+    plt.ylabel("Density")
+    plt.title("End of Run Profiles")
+
+    plt.hist(end_profiles_sig_lcps, density=True)
+
+    plt.savefig(args.input_prefix+".sig_lcps_plot.png", dpi=800, bbox_inches="tight")
+    print("[log] plotted the amount of significant lcps in each profile.")
 
 def parse_arguments():
     """ Defines the command-line argument parser, and return arguments """

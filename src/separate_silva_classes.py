@@ -50,7 +50,7 @@ def main(args):
     print(f"[log] writing out the separate FASTA files for top 1000 genera")
     for i, key in enumerate(sorted_tax_id_set):
         # Only focus on top 1000 classes
-        if i >= 100:
+        if i >= 5000:
             break
         # Write out all the sequences for this genus
         with open(args.output_dir + f"tax_group_{i+1}.fna", "w") as out_fd:
@@ -62,7 +62,7 @@ def main(args):
     
     # Step 4: Write out the filelist
     with open(args.output_dir + "filelist.txt", "w") as out_fd:
-        for i in range(100):
+        for i in range(5000):
             out_fd.write(f"{args.output_dir}tax_group_{i+1}.fna {i+1}\n")
 
 
