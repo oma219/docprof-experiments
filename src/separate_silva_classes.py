@@ -171,6 +171,25 @@ def get_genera_list(silva_seqs):
           genera_list.add(header_split[-2])
   return list(genera_list)
 
+def extract_genus_from_header(header):
+  """ Takes in SILVA header line and returns genus, if it exists """
+  # 1. For Bacteria/Archaea, we focus on sequences with 6 taxa levels
+  if "Archaea;" in header or "Bacteria;" in header:
+      header_split = header.split(";")
+      if len(header_split) == 7 and header_split[5] != "uncultured":
+          return header_split[5]
+      else:
+        return ""
+  # 2. For Eukaryota, we focused on sequences where genus is in organism name
+  elif "Eukaryota" in header:
+      header_split = header.split(";")
+      if header_split[-2] in header_split[-1] and header_split[-2] != "uncultured":
+          return header_split[-2]
+      else:
+        return ""
+  else:
+    return ""
+      
 def main_use_order(args):
     """ main method, version that uses tree order to organize documents """
 
@@ -207,8 +226,36 @@ def main_use_order(args):
     #     for i, genus in enumerate(ordered_genera_list):
     #         out_fd.write(f"{i+1},{count_dict[genus]}\n")
 
-    # Step 3: Write out sequences for each genera separately
+    print(f"\n[log] input file had {len(silva_seqs)} seqeunces in it.")
+    print(f"[log] we filtered it down to {sum([count_dict[x] for x in count_dict.keys()])} sequences")
+    print(f"[log] number of genera found: {len(ordered_genera_list)}\n")
 
+    # Step 3: Load all the sequences from the SILVA database, not just headers this time
+    all_lines = []
+    with open(args.input_file, "r") as in_fd:
+        all_lines = [x.strip() for x in in_fd.readlines()]
+
+    # Step 4: Write out sequences for each genera separately
+    num_genera_to_write = min(len(ordered_genera_list), max(args.num_genera, 2))
+    print(f"[log] writing out the separate FASTA files for top {num_genera_to_write} genera")
+
+    for i, key in enumerate(ordered_genera_list):
+        # Only focus on top n classes
+        if i >= num_genera_to_write:
+            break
+        # Write out all the sequences for this genus
+        with open(args.output_dir + f"tax_group_{i+1}.fna", "w") as out_fd:
+            for j, line in enumerate(all_lines):
+                if '>' in line:
+                    curr_seq_genus = extract_genus_from_header(line)
+                    if curr_seq_genus == key:
+                        out_fd.write(f"{line}\n{all_lines[j+1]}\n")
+
+    # Step 5: Create the filelist
+    with open(args.output_dir + "filelist.txt", "w") as out_fd:
+        for i in range(num_genera_to_write):
+            out_fd.write(f"{args.output_dir}tax_group_{i+1}.fna {i+1}\n")
+    print(f"[log] finished writing list with the paths\n")
 
 def main(args):
     """ main method of the script (original version, does not use tree order)"""
@@ -249,7 +296,7 @@ def main(args):
     print(f"[log] writing out the separate FASTA files for top 1000 genera")
     for i, key in enumerate(sorted_tax_id_set):
         # Only focus on top 1000 classes
-        if i >= 5000:
+        if i >= 1000:
             break
         # Write out all the sequences for this genus
         with open(args.output_dir + f"tax_group_{i+1}.fna", "w") as out_fd:
@@ -261,7 +308,7 @@ def main(args):
     
     # Step 4: Write out the filelist
     with open(args.output_dir + "filelist.txt", "w") as out_fd:
-        for i in range(5000):
+        for i in range(1000):
             out_fd.write(f"{args.output_dir}tax_group_{i+1}.fna {i+1}\n")
 
 def parse_arguments():
@@ -273,6 +320,7 @@ def parse_arguments():
     parser.add_argument("--use-order", dest="use_genera_order", action="store_true", default=False, help="use SILVA tree order to order the documents")
     parser.add_argument("--tree", dest="tree_path", default="", required=False, help="path to *.tre file for the SILVA database")
     parser.add_argument("--tree-map", dest="tree_map_path", default="", required=False, help="path to *.map file for the SILVA database")
+    parser.add_argument("-n", dest="num_genera", default=10, type=int, help="number of genera to write out to separate files")
     args = parser.parse_args()
     return args
 

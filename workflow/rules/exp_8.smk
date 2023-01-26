@@ -44,7 +44,13 @@ rule generate_separate_fasta_files_exp8:
         "exp8_input_files/filelist.txt"
     shell:
         """
-        python3 {repo_dir}/src/separate_silva_classes.py -i {input} -o exp8_input_files/
+        python3 {repo_dir}/src/separate_silva_classes.py \
+        -i {input} \
+        -o exp8_input_files/ \
+        --use-order \
+        --tree data/tax_slv_ssu_138.1.tre \
+        --tree-map data/tax_slv_ssu_138.1.map \
+        -n {num_genera_exp8} \
         """
 
 rule build_docprofs_for_silva_exp8:
