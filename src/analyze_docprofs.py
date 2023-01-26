@@ -11,6 +11,9 @@ import sys
 import argparse
 import random
 import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+import pandas as pd
 
 def parse_doc_profiles(file_path):
     """ Take *.csv file and return a list of lists where each position correponds to a profile """
@@ -30,10 +33,10 @@ def convert_to_increases(profile_list, starting_end):
         # reverse it if we are going right to left ..
         if starting_end == "right":
             profile = profile[::-1]
-        new_profile = [min(100,profile[0])]
+        new_profile = [min(1000,profile[0])]
         for i in range(1, len(profile)):
             val = profile[i] if profile[i] > new_profile[i-1] else new_profile[i-1]
-            val = min(100, val)
+            val = min(1000, val)
             new_profile.append(val)
         if starting_end == "right":
             new_profile = new_profile[::-1]
@@ -108,7 +111,7 @@ def main(args):
     count = 0
     for index in random.sample(range(1, len(start_mono_profiles_left)), 50):
         profile = start_mono_profiles_left[index]
-        if profile[-1] == 100:
+        if profile[-1] == 1000:
             plt.plot([x for x in range(1, len(profile)+1)], profile, label=f"profile_{index}")
             count += 1
             if count >= 10:
@@ -123,7 +126,7 @@ def main(args):
     count = 0
     for index in random.sample(range(1, len(start_mono_profiles_right)), 50):
         profile = start_mono_profiles_right[index]
-        if profile[0] == 100:
+        if profile[0] == 1000:
             plt.plot([x for x in range(1, len(profile)+1)], profile, label=f"profile_{index}")
             count += 1
             if count >= 10:
@@ -138,7 +141,7 @@ def main(args):
     count = 0
     for index in random.sample(range(1, len(end_mono_profiles_left)), 50):
         profile = end_mono_profiles_left[index]
-        if profile[-1] == 100:
+        if profile[-1] == 1000:
             plt.plot([x for x in range(1, len(profile)+1)], profile, label=f"profile_{index}")
             count += 1
             if count >= 10:
@@ -153,7 +156,7 @@ def main(args):
     count = 0
     for index in random.sample(range(1, len(end_mono_profiles_right)), 50):
         profile = end_mono_profiles_right[index]
-        if profile[0] == 100:
+        if profile[0] == 1000:
             plt.plot([x for x in range(1, len(profile)+1)], profile, label=f"profile_{index}")
             count += 1
             if count >= 10:
@@ -163,6 +166,7 @@ def main(args):
     print("[log] plotted the monotonic increases of 50 random profiles.")
 
     # Plot 2: Looking at the number of increases from each direction
+    sns.set_style("darkgrid")
     plt.figure(figsize=(10, 10))
 
     ## Sub-plot 1: Start of run profiles, going from left to right
@@ -170,36 +174,36 @@ def main(args):
     plt.xlabel("Number of Increases in LCP")
     plt.ylabel("Density")
     plt.title("Start of Run Profiles - Left to Right")
-    plt.xlim([0, 10])
 
-    plt.hist(start_profiles_left_increases, density=True)
+    values, counts = np.unique(start_profiles_left_increases, return_counts=True)
+    sns.barplot(x=values, y=(counts/np.sum(counts)))
 
     ## Sub-plot 2: Start of run profiles, going from right to left
     plt.subplot(2, 2, 2)
     plt.xlabel("Number of Increases in LCP")
     plt.ylabel("Density")
     plt.title("Start of Run Profiles - Right to Left")
-    plt.xlim([0, 10])
 
-    plt.hist(start_profiles_right_increases, density=True)
+    values, counts = np.unique(start_profiles_right_increases, return_counts=True)
+    sns.barplot(x=values, y=(counts/np.sum(counts)))
 
     ## Sub-plot 3: End of run profiles, going from left to right
     plt.subplot(2, 2, 3)
     plt.xlabel("Number of Increases in LCP")
     plt.ylabel("Density")
     plt.title("End of Run Profiles - Left to Right")
-    plt.xlim([0, 10])
 
-    plt.hist(end_profiles_left_increases, density=True)
+    values, counts = np.unique(end_profiles_left_increases, return_counts=True)
+    sns.barplot(x=values, y=(counts/np.sum(counts)))
 
     ## Sub-plot 4: Start of run profiles, going from right to left
     plt.subplot(2, 2, 4)
     plt.xlabel("Number of Increases in LCP")
     plt.ylabel("Density")
     plt.title("End of Run Profiles - Right to Left")
-    plt.xlim([0, 10])
 
-    plt.hist(end_profiles_right_increases, density=True)
+    values, counts = np.unique(end_profiles_right_increases, return_counts=True)
+    sns.barplot(x=values, y=(counts/np.sum(counts)))
 
     plt.savefig(args.input_prefix+".monotonic_increases_plot.png", dpi=800, bbox_inches="tight")
     print("[log] plotted the monotonic increases distributions of 1000 profiles.")
@@ -212,19 +216,21 @@ def main(args):
     plt.xlabel("Number of Significant LCPs (>15)")
     plt.ylabel("Density")
     plt.title("Start of Run Profiles")
+    plt.xticks(np.arange(0, max(end_profiles_sig_lcps), step=25))
 
-    plt.hist(start_profiles_sig_lcps, density=True)
+    sns.kdeplot(data=np.array(start_profiles_sig_lcps), color="blue", fill=True)
 
     ## Sub-plot 2: End of run profiles
     plt.subplot(1, 2, 2)
     plt.xlabel("Number of Significant LCPs (>15)")
     plt.ylabel("Density")
     plt.title("End of Run Profiles")
+    plt.xticks(np.arange(0, max(end_profiles_sig_lcps), step=25))
 
-    plt.hist(end_profiles_sig_lcps, density=True)
+    sns.kdeplot(data=np.array(end_profiles_sig_lcps), color="blue", fill=True)
 
     plt.savefig(args.input_prefix+".sig_lcps_plot.png", dpi=800, bbox_inches="tight")
-    print("[log] plotted the amount of significant lcps in each profile.")
+    print("[log] plotted the amount of significant lcps in each profile.\n")
 
 def parse_arguments():
     """ Defines the command-line argument parser, and return arguments """
