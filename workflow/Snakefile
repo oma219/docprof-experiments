@@ -43,6 +43,8 @@ num_strains_exp6 = config["NUM_STRAINS_EXP6"]
 num_classes_exp7 = config["NUM_CLASSES_EXP7"]
 dataset_name_exp7 = config["DATASET_NAME_EXP7"]
 
+num_genera_exp8 = config["NUM_GENERA_EXP8"]
+
 ###############################################################################
 # IMPORTANT: Sets the working directory based on configuration parameter, and 
 #            it can be set on command-line using --config DATA_ROOT=""
