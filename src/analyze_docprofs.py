@@ -209,14 +209,14 @@ def main(args):
     print("[log] plotted the monotonic increases distributions of 1000 profiles.")
 
     # Plot 3: Look at the amount of significant lcps
-    plt.figure(figsize=(10, 5))
+    plt.figure(figsize=(11, 5))
 
     ## Sub-plot 1: Start of run profiles
     plt.subplot(1, 2, 1)
     plt.xlabel("Number of Significant LCPs (>15)")
     plt.ylabel("Density")
     plt.title("Start of Run Profiles")
-    plt.xticks(np.arange(0, max(end_profiles_sig_lcps), step=25))
+    plt.xticks(np.arange(0, max(end_profiles_sig_lcps), step=250))
 
     sns.kdeplot(data=np.array(start_profiles_sig_lcps), color="blue", fill=True)
 
@@ -225,7 +225,7 @@ def main(args):
     plt.xlabel("Number of Significant LCPs (>15)")
     plt.ylabel("Density")
     plt.title("End of Run Profiles")
-    plt.xticks(np.arange(0, max(end_profiles_sig_lcps), step=25))
+    plt.xticks(np.arange(0, max(end_profiles_sig_lcps), step=250))
 
     sns.kdeplot(data=np.array(end_profiles_sig_lcps), color="blue", fill=True)
 
