@@ -73,12 +73,26 @@ make_barplot_comparison <- function(total_df) {
 
 make_grid_barplot_comparison <- function(total_df) {
   dataset.labs <- c("0"="Class 1", "1"="Class 2", "2"="Class 3", "3"="Class 4")
+  #ecoli_strain_label <- subtitute(paste(italic("S. enterica"), " strains"))
+  task.labs <- c("Different Genera"="Different Genera", 
+                 "Same Genus"="Same Genus", 
+                 "E. coli strains"="ecoli_strain_label", 
+                 "S. enterica strains"= paste("hello", "world"))
   bar.labels <- c("recall"="Recall", "precision"="Precision")
   tool.labels <- c("docprofile"="Doc. Array", "spumoni"="SPUMONI 2")
   
+  #total_df$task <- as.factor(total_df$task)
+  #levels(total_df$task) <- c("Different Genera"="task1", "Same Genus"="task2", "E. coli strains"="task3", "S. enterica strains"="task4")
+  
+  total_df$task <- factor(total_df$task,    # Change factor labels
+                          levels = c("Different Genera", "Same Genus", "E. coli strains", "S. enterica strains"),
+                          labels = c("paste('Different', ' Genera')", "paste('Same', ' Genus')", "paste(italic('E. coli'), ' strains')", "paste(italic('S. enterica'), ' strains')"))
+
+  
   plot <- ggplot(data=total_df, aes(x=metric, y=metric_val)) +
     geom_bar(position="dodge", stat="identity", width=0.5, aes(fill=tool), color="black") +
-    facet_grid(factor(task, levels=c('Different Genera', 'Same Genus', 'E. coli strains', 'S. enterica strains')) ~ dataset, labeller = labeller(dataset=dataset.labs)) +
+    facet_grid(task ~ dataset, labeller=labeller(dataset=dataset.labs, task=label_parsed)) +
+    #facet_grid(task ~ dataset, labeller=labeller(dataset=dataset.labs, task=task.labs)) +
     theme_bw() +
     theme(plot.title=element_text(hjust = 0.5, size=12, face="bold"),
           strip.text=element_text(face="bold", size=12),
@@ -143,7 +157,10 @@ ggsave(output_name, plot=plot, dpi=800, device="jpeg", width=10, height=4)
 # Collection of data-frames ...
 total_df_list = list()
 
-#### Dataset 1: Mock Community -------------------------------
+###############################################################
+# Dataset 1: Mock Community
+###############################################################
+
 data_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_5/trial_1/mock/data/"
 plots_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_5/trial_1/mock/plots/"
 
@@ -175,11 +192,15 @@ wide_df<- merge_df %>% pivot_longer(cols=c('recall', 'precision'),
 #   print(x)
 #   print(dataset.labs[[as.character(x)]])
 # }
+
 wide_df["task"] <- "Different Genera"
 total_df_list[[data_folder]] <- wide_df
 
 
-#### Dataset 2: Escherichia genus -------------------------------
+#################################################################
+# Dataset 2: Escherichia genus
+#################################################################
+
 data_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_5/trial_1/ecoligenus/data/"
 plots_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_5/trial_1/ecoligenus/plots/"
 
@@ -211,11 +232,14 @@ wide_df<- merge_df %>% pivot_longer(cols=c('recall', 'precision'),
 #   print(x)
 #   print(dataset.labs[[as.character(x)]])
 # }
+
 wide_df["task"] <- "Same Genus"
 total_df_list[[data_folder]] <- wide_df
 
+######################################################################
+# Dataset 3: Escherichia coli strains
+######################################################################
 
-#### Dataset 3: Escherichia coli strains -------------------------------
 data_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_5/trial_1/ecoli/data/"
 plots_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_5/trial_1/ecoli/plots/"
 
@@ -247,11 +271,14 @@ wide_df<- merge_df %>% pivot_longer(cols=c('recall', 'precision'),
 #   print(x)
 #   print(dataset.labs[[as.character(x)]])
 # }
+
 wide_df["task"] <- "E. coli strains"
 total_df_list[[data_folder]] <- wide_df
 
+##########################################################################
+# Dataset 4: Salmonella enterica strains
+##########################################################################
 
-#### Dataset 4: Salmonella enterica strains  -------------------------------
 data_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_5/trial_1/salmonella/data/"
 plots_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_5/trial_1/salmonella/plots/"
 
@@ -283,11 +310,14 @@ wide_df<- merge_df %>% pivot_longer(cols=c('recall', 'precision'),
 #   print(x)
 #   print(dataset.labs[[as.character(x)]])
 # }
+
 wide_df["task"] <- "S. enterica strains"
 total_df_list[[data_folder]] <- wide_df
 
+###############################################
+# Merge the plots, and make the grid plot
+###############################################
 
-#### Merge the plots, and make the grid plot
 merge_df <- Reduce(function(x, y) merge(x, y, all=TRUE), total_df_list)
 
 plot <- make_grid_barplot_comparison(merge_df)
