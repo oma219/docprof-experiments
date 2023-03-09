@@ -216,7 +216,7 @@ def main(args):
     plt.xlabel("Number of Significant LCPs (>15)")
     plt.ylabel("Density")
     plt.title("Start of Run Profiles")
-    plt.xticks(np.arange(0, max(end_profiles_sig_lcps), step=250))
+    #plt.xticks(np.arange(0, max(end_profiles_sig_lcps)))
 
     sns.kdeplot(data=np.array(start_profiles_sig_lcps), color="blue", fill=True)
 
@@ -225,7 +225,7 @@ def main(args):
     plt.xlabel("Number of Significant LCPs (>15)")
     plt.ylabel("Density")
     plt.title("End of Run Profiles")
-    plt.xticks(np.arange(0, max(end_profiles_sig_lcps), step=250))
+    #plt.xticks(np.arange(0, max(end_profiles_sig_lcps), step=250))
 
     sns.kdeplot(data=np.array(end_profiles_sig_lcps), color="blue", fill=True)
 
