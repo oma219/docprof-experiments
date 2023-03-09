@@ -41,7 +41,8 @@ make_grouped_bar_chart <- function(total_df) {
                 legend.box="horizontal",
                 #legend.background = element_rect(size=0.5, colour ="black"),
                 legend.title=element_text(size=12, face="bold"),
-                axis.text=element_text(size=10, color="black")) +
+                axis.text.y=element_text(size=10, color="black"),
+                axis.text.x=element_text(size=10, color="black", face="italic")) +
           #coord_cartesian(ylim = c(0.75,1.00)) +
           labs(x="Strain Classification Dataset", y="Recall") +
           scale_x_discrete(labels=bar.labels) +

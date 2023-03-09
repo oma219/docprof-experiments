@@ -23,6 +23,8 @@ plots_folder <- "/Users/omarahmed/downloads/current_research/docarray_exps/exp_7
 ########################################################################
 
 make_distribution_plot <- function(total_df) {
+  salmonella_label <- expression(paste(italic("S. enterica"), " strains"))
+  ecoli_label <- expression(paste(italic("E. coli"), " strains"))
   plot <- ggplot(data=total_df, aes(x=name, y=ANI)) +
           geom_boxplot(aes(fill=name), color="black") +
           theme_bw() +
@@ -36,7 +38,7 @@ make_distribution_plot <- function(total_df) {
                 legend.title=element_text(size=12, face="bold"),
                 axis.text=element_text(size=12, color="black")) +
           scale_x_discrete(limits=c("salmonstrain","ecolistrain","egenus","MOCK"), 
-                           labels=c("S. enterica strains", "E. coli strains", "Same Genus", "Different Genera")) +
+                           labels=c(salmonella_label, ecoli_label, "Same Genus", "Different Genera")) +
           coord_flip() +
           labs(x="Dataset", y="Average Nucleotide Identity (ANI)") 
   return (plot)
@@ -58,7 +60,7 @@ for(i in seq_along(data_files)) {
 }
 merge_df <- Reduce(function(x, y) merge(x, y, all=TRUE), df_list)
 
-# Make the violin plot ...
+# Make the boxplot...
 plot <- make_distribution_plot(merge_df)
 plot
 
