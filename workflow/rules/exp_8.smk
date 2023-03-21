@@ -58,10 +58,11 @@ rule build_docprofs_for_silva_exp8:
         "exp8_input_files/filelist.txt"
     output:
         "exp8_index/output.fna.edap",
-        "exp8_index/output.fna.sdap"
+        "exp8_index/output.fna.sdap",
+        "exp8_index/output.resources.txt"
     shell:
         """
-        pfp_doc build -f {input} -o exp8_index/output
+        {time_prog} {time_format} --output={output[2]} pfp_doc64 build -f {input} -o exp8_index/output
         """
 
 rule print_out_profiles_exp8:
@@ -73,7 +74,7 @@ rule print_out_profiles_exp8:
         "exp8_profiles/output.edap.csv"
     shell:
         """
-        pfp_doc info -r exp8_index/output -o exp8_profiles/output -n 1000000
+        pfp_doc64 info -r exp8_index/output -o exp8_profiles/output
         """
 
 rule analyze_the_profiles_exp8:
