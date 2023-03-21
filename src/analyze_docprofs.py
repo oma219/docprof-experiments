@@ -22,7 +22,7 @@ def parse_doc_profiles(file_path):
         for line in in_fd:
             curr_profile = [int(x) for x in line.strip().split(",")]
             profiles.append(curr_profile)
-            if len(profiles) == 10000:
+            if len(profiles) == 30000:
                 break
     return profiles
 
@@ -88,6 +88,8 @@ def main(args):
     # Step 3: Analyze the number of monotonic increases from each direction 
     start_profiles_left_increases = compute_increases_per_profile(start_mono_profiles_left, "left")
     start_profiles_right_increases = compute_increases_per_profile(start_mono_profiles_right, "right")
+    print(len(start_mono_profiles_left))
+    print(len(start_mono_profiles_right))
 
     end_profiles_left_increases = compute_increases_per_profile(end_mono_profiles_left, "left")
     end_profiles_right_increases = compute_increases_per_profile(end_mono_profiles_right, "right")
@@ -186,6 +188,7 @@ def main(args):
 
     values, counts = np.unique(start_profiles_right_increases, return_counts=True)
     sns.barplot(x=values, y=(counts/np.sum(counts)))
+    print(counts)
 
     ## Sub-plot 3: End of run profiles, going from left to right
     plt.subplot(2, 2, 3)
@@ -195,6 +198,7 @@ def main(args):
 
     values, counts = np.unique(end_profiles_left_increases, return_counts=True)
     sns.barplot(x=values, y=(counts/np.sum(counts)))
+    print(sum(counts))
 
     ## Sub-plot 4: Start of run profiles, going from right to left
     plt.subplot(2, 2, 4)
@@ -204,6 +208,7 @@ def main(args):
 
     values, counts = np.unique(end_profiles_right_increases, return_counts=True)
     sns.barplot(x=values, y=(counts/np.sum(counts)))
+    print(counts)
 
     plt.savefig(args.input_prefix+".monotonic_increases_plot.png", dpi=800, bbox_inches="tight")
     print("[log] plotted the monotonic increases distributions of 1000 profiles.")
