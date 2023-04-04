@@ -45,6 +45,8 @@ dataset_name_exp7 = config["DATASET_NAME_EXP7"]
 
 num_genera_exp8 = config["NUM_GENERA_EXP8"]
 
+num_genera_exp9 = config["NUM_GENERA_EXP9"]
+
 ###############################################################################
 # IMPORTANT: Sets the working directory based on configuration parameter, and 
 #            it can be set on command-line using --config DATA_ROOT=""
@@ -63,6 +65,7 @@ include: "rules/exp_5.smk"
 include: "rules/exp_6.smk"
 include: "rules/exp_7.smk"
 include: "rules/exp_8.smk"
+include: "rules/exp_9.smk"
 
 ###############################################################################
 # All rules for each experiment
