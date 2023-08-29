@@ -53,7 +53,7 @@ rule generate_separate_fasta_files_exp9:
         -n {num_genera_exp9} \
         """
 
-rule build_docprofs_with_specific_cols_exp9:
+rule build_docprofs_with_taxonomic_comp_exp9:
     input:
         "exp9_input_files/filelist.txt"
     output:
@@ -64,6 +64,20 @@ rule build_docprofs_with_specific_cols_exp9:
         pfp_doc64 build -f {output} \
                         -o exp9_indexes/num_cols_{wildcards.col}/output \
                         --taxcomp \
+                        --num-col {wildcards.col}
+        """
+
+rule build_docprofs_with_topk_comp_exp9:
+    input:
+        "exp9_input_files/filelist.txt"
+    output:
+        "exp9_indexes/topk_num_cols_{col}/filelist.txt"
+    shell:
+        """
+        cp {input[0]} {output}
+        pfp_doc64 build -f {output} \
+                        -o exp9_indexes/topk_num_cols_{wildcards.col}/output \
+                        --top-k \
                         --num-col {wildcards.col}
         """
 
@@ -79,7 +93,7 @@ rule build_docprofs_indexes_for_full_profile_exp9:
                         -o exp9_indexes/full_structure/output \
         """
 
-rule analyze_docprofs_indexes_with_specific_cols_exp9:
+rule analyze_docprofs_indexes_with_taxonomic_comp_exp9:
     input:
         "exp9_indexes/num_cols_{col}/filelist.txt"
     output:
@@ -95,6 +109,21 @@ rule analyze_docprofs_indexes_with_specific_cols_exp9:
         of_sum=$(($sdap_of + $edap_of))
 
         printf "%s,%d,%d\n" {wildcards.col} $table_sum $of_sum > {output}
+        """
+
+rule analyze_docprofs_indexes_with_topk_comp_exp9:
+    input:
+        "exp9_indexes/topk_num_cols_{col}/filelist.txt"
+    output:
+        "exp9_indexes/topk_num_cols_{col}/index_stats.txt"
+    shell:
+        """
+        sdap=$(ls -l exp9_indexes/topk_num_cols_{wildcards.col}/output.fna.topk.sdap | awk '{{print $5}}')
+        edap=$(ls -l exp9_indexes/topk_num_cols_{wildcards.col}/output.fna.topk.edap | awk '{{print $5}}')
+
+        table_sum=$(($sdap + $edap))
+
+        printf "%d\n" $table_sum > {output}
         """
 
 rule analyze_docprofs_indexes_for_full_profile_exp9:
@@ -115,12 +144,21 @@ rule analyze_docprofs_indexes_for_full_profile_exp9:
 rule generate_exp9_files:
     input:
         expand("exp9_indexes/num_cols_{col}/index_stats.txt", col=range(2,16)),
+        expand("exp9_indexes/topk_num_cols_{col}/index_stats.txt", col=range(2,16)),
         "exp9_indexes/full_structure/index_stats.txt"
     output:
         "exp9_output/analysis.csv"
     shell:
         """
-        for file in {input}; do
-            cat $file >> {output}
+        for col in $(seq 2 15); do 
+            taxfile="exp9_indexes/num_cols_${{col}}/index_stats.txt"
+            kfile="exp9_indexes/topk_num_cols_${{col}}/index_stats.txt"
+            
+            table=$(cat $taxfile | awk -F, '{{print $2}}')
+            overflow=$(cat $taxfile | awk -F, '{{print $3}}')
+            ktable=$(head -n1 $kfile | awk '{{print $1}}')
+            
+            printf "%d,%d,%d,%d\n" $col $table $overflow $ktable >> {output}
         done
+        cat exp9_indexes/full_structure/index_stats.txt >> {output}
         """
