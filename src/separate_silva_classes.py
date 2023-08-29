@@ -117,7 +117,7 @@ def build_ordered_genera_list(traversal_with_names, genera_list):
   """ Based on the traversal, reorganize the genera list """
   final_list = []
   for taxa in traversal_with_names:
-    if taxa is not "Interior" and taxa is not "Root":
+    if taxa != "Interior" and taxa != "Root":
       if taxa in genera_list and taxa not in final_list:
         final_list.append(taxa)
   assert len(final_list) == len(genera_list)
@@ -204,7 +204,7 @@ def main_use_order(args):
     root = build_newick_tree(TreeNode("Root"), strip_parentheses(full_input_tree))
 
     traversal = traversal_newick_tree(root, [])
-    traversal_with_names = [id_map[int(x)] if x is not "Interior" and x is not "Root" else x for x in traversal]
+    traversal_with_names = [id_map[int(x)] if x != "Interior" and x != "Root" else x for x in traversal]
     ordered_genera_list = build_ordered_genera_list(traversal_with_names, genera_list)
 
     # Step 2: Process the headers to identify how many sequences are in each genera
