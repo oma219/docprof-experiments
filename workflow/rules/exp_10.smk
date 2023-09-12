@@ -84,7 +84,7 @@ rule build_pfpdoc_tax_index_exp10:
     shell:
         """
         cp {input[0]} {output[0]}
-        pfp_doc64 build -f {output} \
+        pfp_doc64 build -f {output[0]} \
                         -o exp10_indexes/doc_index/output \
                         --taxcomp \
                         --num-col 7 -n

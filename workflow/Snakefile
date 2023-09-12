@@ -50,6 +50,9 @@ num_genera_exp9 = config["NUM_GENERA_EXP9"]
 num_genera_exp10 = config["NUM_GENERA_EXP10"]
 num_mems_exp10 = config["NUM_MEMS_EXP10"]
 
+num_docs_exp11 = config["NUM_DOCS_EXP11"]
+num_reads_exp11 = config["NUM_READS_EXP11"]
+
 ###############################################################################
 # IMPORTANT: Sets the working directory based on configuration parameter, and 
 #            it can be set on command-line using --config DATA_ROOT=""
@@ -70,6 +73,7 @@ include: "rules/exp_7.smk"
 include: "rules/exp_8.smk"
 include: "rules/exp_9.smk"
 include: "rules/exp_10.smk"
+include: "rules/exp_11.smk"
 
 ###############################################################################
 # All rules for each experiment
