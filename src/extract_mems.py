@@ -122,7 +122,7 @@ def main(args):
         if args.half_mems and curr_id < args.count: # deal with half-MEMs
             curr_id = print_out_half_mems(curr_seq, lengths_array, curr_id, args.threshold, out_fd)
         elif curr_id < args.count: # deal with MEMs
-            curr_id = print_out_mems(curr_seq, lengths_array, curr_id, args.threshold, out_fd)
+            curr_id = print_out_mems(curr_seq, lengths_array, curr_id, args.threshold, out_fd, args.count)
     
     # Close input/output
     pattern_fd.close()
