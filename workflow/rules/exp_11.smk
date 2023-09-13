@@ -92,7 +92,8 @@ rule build_pfpdoc_tax_index_exp11:
         pfp_doc64 build -f {output[0]} \
                         -o exp11_indexes/doc_index/output \
                         --taxcomp \
-                        --num-col 7 -n
+                        --num-col 7 -n \
+                        --revcomp
         """
 
 # Section 2.4: Generate MS with respect to a database of all genomes
@@ -131,3 +132,46 @@ rule extract_mems_or_halfmems_based_on_ms_exp11:
         -t 10 \
         -o {output[0]} 
         """
+
+# Section 2.6: Compute the leftmost, rightmost occurrences using 
+# the document array profiles
+
+rule determined_doc_array_listings_for_mems_exp11:
+    input:
+        "exp11_indexes/doc_index/output.fna.taxcomp.sdap",
+        "exp11_indexes/doc_index/output.fna.taxcomp.edap",
+        "exp11_indexes/doc_index/output.fna.taxcomp.of.sdap",
+        "exp11_indexes/doc_index/output.fna.taxcomp.of.edap",
+        "exp11_results/extracted_mems/half_mems_dataset_{num}.fastq"
+    output:
+        "exp11_results/listings/half_mems_dataset_{num}.fastq",
+        "exp11_results/listings/half_mems_dataset_{num}.fastq.listings"
+    shell:
+        """
+        cp {input[4]} {output[0]}
+        pfp_doc64 run --ref exp11_indexes/doc_index/output \
+                      --pattern {output[0]} \
+                      --num-col 7 \
+                      --taxcomp
+        """
+
+# Section 2.7: Take the listings and plot the LCA on the
+# taxonomy on a tree diagram.
+
+rule plot_lca_on_taxonomy_exp11:
+    input:
+        expand("exp11_results/listings/half_mems_dataset_{num}.fastq.listings", num=range(1, num_docs_exp11+1))
+    output:
+        expand("exp11_results/plots/doc_{num}_results.txt", num=range(1, num_docs_exp11+1)),
+        expand("exp11_results/plots/doc_{num}_plots.png", num=range(1, num_docs_exp11+1))
+    shell:
+        """
+        echo helloworld > {output[0]}
+        python3 {repo_dir}/src/plot_lca_on_tree_exp11.py \
+                --taxonomy exp11_data/exp11_taxonomy.txt \
+                --input {input} \
+                --num-of-docs {num_docs_exp11} \
+                --doc-to-name exp11_data/exp11_doc_names.txt \
+                --output-dir exp11_results/plots/
+        """
+
