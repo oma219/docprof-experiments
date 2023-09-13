@@ -249,12 +249,6 @@ def main(args):
         for curr_node in tree_nodes:
             curr_node.weight = 0
         
-
-
-
-
-
-
 def parse_arguments():
     """ Defines the command-line argument parser, and return arguments """
     parser = argparse.ArgumentParser(description="This script is for experiment 11, plotting LCA on taxonomy.")
