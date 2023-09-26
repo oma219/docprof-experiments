@@ -51,10 +51,14 @@ rule build_index_with_heuristics_exp12:
         "exp12_index/heuristic/{num}_genomes/filelist.txt",
         "exp12_index/heuristic/{num}_genomes/build.log",
         "exp12_index/heuristic/{num}_genomes/output.fna.sdap",
-        "exp12_index/heuristic/{num}_genomes/output.fna.edap"
+        "exp12_index/heuristic/{num}_genomes/output.fna.edap",
+        "exp12_index/heuristic/{num}_genomes/time_and_mem.log",
+        "exp12_index/heuristic/{num}_genomes/read_and_write.log"
     shell:
         """
         cp {input} {output[0]}
+        {time_prog} {time_format} --output={output[4]} \
+        {strace_prog} {strace_args} -o {output[5]} \
         pfp_doc64 build --filelist {output[0]} \
                         --output exp12_index/heuristic/{wildcards.num}_genomes/output 2> {output[1]}
         """
@@ -66,10 +70,14 @@ rule build_index_with_no_heuristics_exp12:
         "exp12_index/no_heuristic/{num}_genomes/filelist.txt",
         "exp12_index/no_heuristic/{num}_genomes/build.log",
         "exp12_index/no_heuristic/{num}_genomes/output.fna.sdap",
-        "exp12_index/no_heuristic/{num}_genomes/output.fna.edap"
+        "exp12_index/no_heuristic/{num}_genomes/output.fna.edap",
+        "exp12_index/no_heuristic/{num}_genomes/time_and_mem.log",
+        "exp12_index/no_heuristic/{num}_genomes/read_and_write.log"
     shell:
         """
         cp {input} {output[0]}
+        {time_prog} {time_format} --output={output[4]} \
+        {strace_prog} {strace_args} -o {output[5]} \
         pfp_doc64 build --filelist {output[0]} \
                         --no-heuristic \
                         --output exp12_index/no_heuristic/{wildcards.num}_genomes/output 2> {output[1]}
@@ -82,25 +90,56 @@ rule build_index_with_two_pass_exp12:
         "exp12_index/two_pass/{num}_genomes/filelist.txt",
         "exp12_index/two_pass/{num}_genomes/build.log",
         "exp12_index/two_pass/{num}_genomes/output.fna.sdap",
-        "exp12_index/two_pass/{num}_genomes/output.fna.edap"
+        "exp12_index/two_pass/{num}_genomes/output.fna.edap",
+        "exp12_index/two_pass/{num}_genomes/time_and_mem.log",
+        "exp12_index/two_pass/{num}_genomes/read_and_write.log"
     shell:
         """
         cp {input} {output[0]}
+        {time_prog} {time_format} --output={output[4]} \
+        {strace_prog} {strace_args} -o {output[5]} \
         pfp_doc64 build --filelist {output[0]} \
                         --two-pass ./temp \
                         --tmp-size 10GB \
                         --output exp12_index/two_pass/{wildcards.num}_genomes/output 2> {output[1]}
         """
 
-# Section 2.3: Combine all the results into one file
+rule output_document_array_profile_exp12:
+    input:
+        "exp12_index/{type}/{num}_genomes/output.fna.sdap",
+        "exp12_index/{type}/{num}_genomes/output.fna.edap"
+    output:
+        "exp12_index/{type}/{num}_genomes/output.sdap.csv",
+        "exp12_index/{type}/{num}_genomes/output.edap.csv"
+    shell:
+        """
+        pfp_doc64 info --ref exp12_index/{wildcards.type}/{wildcards.num}_genomes/output \
+                       --output exp12_index/{wildcards.type}/{wildcards.num}_genomes/output
+        """
+
+rule compute_diff_of_no_heuristic_and_twopass_exp12:
+    input:
+        "exp12_index/no_heuristic/{num}_genomes/output.sdap.csv",
+        "exp12_index/no_heuristic/{num}_genomes/output.edap.csv",
+        "exp12_index/two_pass/{num}_genomes/output.sdap.csv",
+        "exp12_index/two_pass/{num}_genomes/output.edap.csv"
+    output:
+        "exp12_results/diffs/{num}_genomes_diff.txt"
+    shell:
+        """
+        diff {input[0]} {input[2]} | wc -l > {output}
+        diff {input[1]} {input[3]} | wc -l >> {output}
+        """
+
+# Section 2.3: Combine all the results into different files
 
 rule compile_results_from_different_methods_exp12:
     input:
         expand("exp12_index/{type}/{num}_genomes/build.log", 
                type=["heuristic", "no_heuristic","two_pass"],
-               num=[2,3,4,5,10,15,20,25,30])
+               num=[2,3,4,5,10,15,20,25,30,35,40])
     output:
-        "exp12_results/output.csv"
+        "exp12_results/output_time.csv"
     shell:
         """
         printf "num,heuristic,noheuristic,twopasstotal,firstpass,secondpass\n" > {output}
@@ -113,6 +152,78 @@ rule compile_results_from_different_methods_exp12:
             printf "%d,%.2f,%.2f,%.2f,%.2f,%.2f\n" $num $heur $no_heur $tpass $onepass $twopass >> {output}
         done
         """
+
+rule compile_memory_results_from_different_methods_exp12:
+    input:
+        expand("exp12_index/{type}/{num}_genomes/time_and_mem.log",
+               type=['heuristic', 'no_heuristic', 'two_pass'],
+               num=[2,3,4,5,10,15,20,25,30,35,40]),
+        expand("exp12_index/{type}/{num}_genomes/read_and_write.log",
+               type=['heuristic', 'no_heuristic', 'two_pass'],
+               num=[2,3,4,5,10,15,20,25,30,35,40])
+    output:
+        "exp12_results/output_mem.csv"
+    shell:
+        """
+        printf "num,heurmaxrss,heurwriteio,heurreadio\n" > {output}
+        for num in 2 3; do
+            heurmaxrss=$(awk '{{print $NF}}' "exp12_index/heuristic/${{num}}_genomes/time_and_mem.log")
+            heurwriteio=$(awk 'BEGIN{{sum=0}} \
+                                {{if (match($0, /write\(([0-9]+)/, a)) \
+                                {{if (a[1] > 2) {{sum+=$NF}}}}}} \
+                                END{{print sum}}' "exp12_index/heuristic/${{num}}_genomes/read_and_write.log")
+            heurreadio=$(awk 'BEGIN{{sum=0}} \
+                                {{if (match($0, /read\(([0-9]+)/, a)) \
+                                {{if (a[1] > 2) {{sum+=$NF}}}}}} \
+                                END{{print sum}}' "exp12_index/heuristic/${{num}}_genomes/read_and_write.log")
+
+            noheurmaxrss=$(awk '{{print $NF}}' "exp12_index/no_heuristic/${{num}}_genomes/time_and_mem.log")
+            noheurwriteio=$(awk 'BEGIN{{sum=0}} \
+                                {{if (match($0, /write\(([0-9]+)/, a)) \
+                                {{if (a[1] > 2) {{sum+=$NF}}}}}} \
+                                END{{print sum}}' "exp12_index/no_heuristic/${{num}}_genomes/read_and_write.log")
+            noheurreadio=$(awk 'BEGIN{{sum=0}} \
+                                {{if (match($0, /read\(([0-9]+)/, a)) \
+                                {{if (a[1] > 2) {{sum+=$NF}}}}}} \
+                                END{{print sum}}' "exp12_index/no_heuristic/${{num}}_genomes/read_and_write.log")
+
+            tpassmaxrss=$(awk '{{print $NF}}' "exp12_index/two_pass/${{num}}_genomes/time_and_mem.log")
+            tpasswriteio=$(awk 'BEGIN{{sum=0}} \
+                                {{if (match($0, /write\(([0-9]+)/, a)) \
+                                {{if (a[1] > 2) {{sum+=$NF}}}}}} \
+                                END{{print sum}}' "exp12_index/two_pass/${{num}}_genomes/read_and_write.log")
+            tpassreadio=$(awk 'BEGIN{{sum=0}} \
+                                {{if (match($0, /read\(([0-9]+)/, a)) \
+                                {{if (a[1] > 2) {{sum+=$NF}}}}}} \
+                                END{{print sum}}' "exp12_index/two_pass/${{num}}_genomes/read_and_write.log")
+
+            printf "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n" $num $heurmaxrss $heurwriteio $heurreadio \
+                                                    $noheurmaxrss $noheurwriteio $noheurreadio \
+                                                    $tpassmaxrss $tpasswriteio $tpassreadio
+
+        done
+        """
+        
+rule compile_diff_results_from_diff_indexes_exp12:
+    input:
+        expand("exp12_results/diffs/{num}_genomes_diff.txt", num=[2,3,4,5,10,15,20,25,30,35,40])
+    output:
+        "exp12_results/output_diffs.csv"
+    shell:
+        """
+        printf "num,diffsdap,diffedap\n" > {output}
+        for num in 2 3; do
+            sdap=$(head -n1 "exp12_results/diffs/${{num}}_genomes_diff.txt" | awk '{{print $1}}')
+            edap=$(head -n2 "exp12_results/diffs/${{num}}_genomes_diff.txt" | tail -n1 | awk '{{print $1}}')
+            printf "%d,%d,%d\n" $num $sdap $edap >> {output}
+        done
+        """
+
+rule run_all_exp12:
+    input:
+        "exp12_results/output_time.csv",
+        "exp12_results/output_mem.csv",
+        "exp12_results/output_diffs.csv"
 
 
 

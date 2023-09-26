@@ -20,6 +20,8 @@ r_dir = config["RINDEX_BUILD_DIRECTORY"]
 base_dir = config["DATA_ROOT"]
 time_prog = config["TIME_PROG"]
 time_format = config["TIME_FORMAT"]
+strace_prog = config["STRACE_PROG"]
+strace_args = config["STRACE_ARGS"]
 
 num_datasets_exp1 = config["NUM_DATASETS_EXP1"]
 mem_count_exp1 = config["MEM_COUNT_EXP1"]
