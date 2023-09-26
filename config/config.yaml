@@ -1,13 +1,30 @@
-DATA_ROOT: "/home/oahmed6/scr4_blangme2/oahmed/doc_array/exp_2_8class"
-EXP_TYPE: 2
+DATA_ROOT: "/home/oahmed6/scr4_blangme2/oahmed/doc_array/exp_9_test"
+EXP_TYPE: 9
 REPO_DIRECTORY: "/home/oahmed6/docprof-experiments"
 PBSIM_MODEL: "/home/oahmed6/pbsim2/data/R95.model"
 RINDEX_BUILD_DIRECTORY: "/home/oahmed6/r-index_dev/build"
 TIME_PROG: "/usr/bin/time"
 TIME_FORMAT: "--format='user= %U system= %S elapsed= %e CPU= %P MemMax= %M'"
+STRACE_PROG: "strace"
+STRACE_ARGS: "-e trace=read,write"
 NUM_DATASETS_EXP1: 4
 THRESHOLD_EXP1: 15
 MEM_COUNT_EXP1: 1000000
-NUM_DATASETS_EXP2: 8
+NUM_DATASETS_EXP2: 3
 THRESHOLD_EXP2: 0
 MEM_COUNT_EXP2: 1000000
+NUM_GENE_CLASSES_EXP3: 4
+READS_PER_CLASS_EXP3: 100000
+NUM_CLASSES_EXP4: 8
+NUM_CLASSES_EXP5: 4
+NUM_READS_PER_CLASS_EXP5: 50000
+NUM_CLASSES_EXP6: 7
+NUM_STRAINS_EXP6: 4
+NUM_CLASSES_EXP7: 4
+DATASET_NAME_EXP7: "ecolistrain"
+NUM_GENERA_EXP8: 3500
+NUM_GENERA_EXP9: 100
+NUM_GENERA_EXP10: 50
+NUM_MEMS_EXP10: 1000000
+NUM_DOCS_EXP11: 7
+NUM_READS_EXP11: 1000000
