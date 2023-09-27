@@ -127,8 +127,10 @@ rule compute_diff_of_no_heuristic_and_twopass_exp12:
         "exp12_results/diffs/{num}_genomes_diff.txt"
     shell:
         """
+        set +e
         diff {input[0]} {input[2]} | wc -l > {output}
         diff {input[1]} {input[3]} | wc -l >> {output}
+        set -e
         """
 
 # Section 2.3: Combine all the results into different files
