@@ -20,7 +20,7 @@ def get_all_genomes_for_exp12(wildcards):
     """ Returns all the genomes in the data/ folder """
     file_list = []
     for data_file in os.listdir(f"exp12_data/"):
-        if data_file.endswith(".fna"):
+        if data_file.endswith(".fna") or data_file.endswith(".fa"):
             file_list.append(f"exp12_data/" + data_file)
     return file_list
 
@@ -99,8 +99,8 @@ rule build_index_with_two_pass_exp12:
         {time_prog} {time_format} --output={output[4]} \
         {strace_prog} {strace_args} -o {output[5]} \
         pfp_doc64 build --filelist {output[0]} \
-                        --two-pass ./temp \
-                        --tmp-size 10GB \
+                        --two-pass exp12_index/two_pass/{wildcards.num}_genomes/temp  \
+                        --tmp-size 20GB \
                         --output exp12_index/two_pass/{wildcards.num}_genomes/output 2> {output[1]}
         """
 
@@ -139,13 +139,13 @@ rule compile_results_from_different_methods_exp12:
     input:
         expand("exp12_index/{type}/{num}_genomes/build.log", 
                type=["heuristic", "no_heuristic","two_pass"],
-               num=[2,3,4,5,10,15,20,25,30,35,40])
+               num=nums_used_exp12)
     output:
         "exp12_results/output_time.csv"
     shell:
         """
         printf "num,heuristic,noheuristic,twopasstotal,firstpass,secondpass\n" > {output}
-        for num in 2 3 4 5 10 15 20 25 30; do
+        for num in {nums_used_exp12_str}; do
             heur=$(grep 'finished' "exp12_index/heuristic/${{num}}_genomes/build.log" | awk '{{print $NF}}')
             no_heur=$(grep 'finished' "exp12_index/no_heuristic/${{num}}_genomes/build.log" | awk '{{print $NF}}')
             tpass=$(grep 'finished' "exp12_index/two_pass/${{num}}_genomes/build.log" | awk '{{print $NF}}')
@@ -159,16 +159,16 @@ rule compile_memory_results_from_different_methods_exp12:
     input:
         expand("exp12_index/{type}/{num}_genomes/time_and_mem.log",
                type=['heuristic', 'no_heuristic', 'two_pass'],
-               num=[2,3,4,5,10,15,20,25,30,35,40]),
+               num=nums_used_exp12),
         expand("exp12_index/{type}/{num}_genomes/read_and_write.log",
                type=['heuristic', 'no_heuristic', 'two_pass'],
-               num=[2,3,4,5,10,15,20,25,30,35,40])
+               num=nums_used_exp12)
     output:
         "exp12_results/output_mem.csv"
     shell:
         """
-        printf "num,heurmaxrss,heurwriteio,heurreadio\n" > {output}
-        for num in 2 3; do
+        printf "num,heurmaxrss,heurwriteio,heurreadio,noheurmaxrss,noheurwriteio,noheurreadio,tpassmaxrss,tpasswriteio,tpassreadio\n" > {output}
+        for num in {nums_used_exp12_str}; do
             heurmaxrss=$(awk '{{print $NF}}' "exp12_index/heuristic/${{num}}_genomes/time_and_mem.log")
             heurwriteio=$(awk 'BEGIN{{sum=0}} \
                                 {{if (match($0, /write\(([0-9]+)/, a)) \
@@ -201,20 +201,19 @@ rule compile_memory_results_from_different_methods_exp12:
 
             printf "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n" $num $heurmaxrss $heurwriteio $heurreadio \
                                                     $noheurmaxrss $noheurwriteio $noheurreadio \
-                                                    $tpassmaxrss $tpasswriteio $tpassreadio
-
+                                                    $tpassmaxrss $tpasswriteio $tpassreadio >> {output}
         done
         """
         
 rule compile_diff_results_from_diff_indexes_exp12:
     input:
-        expand("exp12_results/diffs/{num}_genomes_diff.txt", num=[2,3,4,5,10,15,20,25,30,35,40])
+        expand("exp12_results/diffs/{num}_genomes_diff.txt", num=nums_used_exp12)
     output:
         "exp12_results/output_diffs.csv"
     shell:
         """
         printf "num,diffsdap,diffedap\n" > {output}
-        for num in 2 3; do
+        for num in {nums_used_exp12_str}; do
             sdap=$(head -n1 "exp12_results/diffs/${{num}}_genomes_diff.txt" | awk '{{print $1}}')
             edap=$(head -n2 "exp12_results/diffs/${{num}}_genomes_diff.txt" | tail -n1 | awk '{{print $1}}')
             printf "%d,%d,%d\n" $num $sdap $edap >> {output}
@@ -226,7 +225,6 @@ rule run_all_exp12:
         "exp12_results/output_time.csv",
         "exp12_results/output_mem.csv",
         "exp12_results/output_diffs.csv"
-
-
-
+    
+ 
             
