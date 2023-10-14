@@ -80,6 +80,7 @@ include: "rules/exp_9.smk"
 include: "rules/exp_10.smk"
 include: "rules/exp_11.smk"
 include: "rules/exp_12.smk"
+include: "rules/exp_13.smk"
 
 ###############################################################################
 # All rules for each experiment
