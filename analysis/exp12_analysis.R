@@ -1,5 +1,6 @@
 library(ggplot2)
 library(tidyr)
+library(ggpubr)
 
 
 # Time results:
@@ -12,7 +13,12 @@ new_df <- pivot_longer(df,
                        values_to="time")
 
 new_df$build <- factor(new_df$build, levels=c("noheuristic", "heuristic", "twopasstotal", "firstpass", "secondpass"))
-plot <- ggplot(new_df, aes(x=num)) + 
+group.colors <- c("noheuristic" = "#F8766D", 
+                  "heuristic" = "#A3A500", 
+                  "twopasstotal" ="#00BF7D", 
+                  "firstpass" = "#00B0F6", 
+                  "secondpass" = "#E76BF3")
+plot1 <- ggplot(new_df, aes(x=num)) + 
         geom_point(aes(group=build, y=time, color=build)) +
         geom_line(aes(group=build, y=time, color=build)) +
         theme_bw() +
@@ -23,22 +29,26 @@ plot <- ggplot(new_df, aes(x=num)) +
         labs(x="Number of Documents",
              y="Time (sec)",
              title="") +
-        scale_x_continuous(breaks=seq(0, 40, 5)) +
-        scale_y_continuous(breaks=seq(0, 1750, 250)) +
-        scale_color_discrete(name="Build Mode",
-                             labels=c("heuristic"="Heuristic",
-                                      "noheuristic"="No Heuristic",
-                                      "twopasstotal"="Both Passes",
-                                      "firstpass"="1st Pass",
-                                      "secondpass"="2nd Pass"))
-plot
+        scale_x_continuous(breaks=seq(0, 250, 25)) +
+        scale_y_continuous(breaks=seq(0, 120000, 10000)) +
+        scale_color_manual(name="Build Mode",
+                           labels=c("heuristic"="Heuristic",
+                                    "noheuristic"="No Heuristic",
+                                    "twopasstotal"="Both Passes",
+                                    "firstpass"="1st Pass",
+                                    "secondpass"="2nd Pass"), 
+                           values=group.colors)
+
+
+plot1
 ggsave("/Users/omarahmed/Downloads/output_time_plot.png", 
-       plot=plot, 
+       plot=plot1, 
        device="png", 
        dpi=400,
        width=7,
        height=5,
        units=c("in"))
+
 
 
 # Memory results:
