@@ -58,6 +58,8 @@ num_reads_exp11 = config["NUM_READS_EXP11"]
 nums_used_exp12 = config["NUMS_USED_EXP12"]
 nums_used_exp12_str = " ".join([str(x) for x in nums_used_exp12])
 
+tmp_mem_used_exp13=config["TEMP_MEM_USED_EXP13"]
+
 ###############################################################################
 # IMPORTANT: Sets the working directory based on configuration parameter, and 
 #            it can be set on command-line using --config DATA_ROOT=""
