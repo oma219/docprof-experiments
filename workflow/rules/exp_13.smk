@@ -61,7 +61,7 @@ rule build_index_with_two_pass_exp13:
         {strace_prog} {strace_args} -o {output[5]} \
         pfp_doc64 build --filelist {output[0]} \
                         --two-pass exp13_index/{wildcards.num}_genomes/temp  \
-                        --tmp-size 400GB \
+                        --tmp-size {tmp_mem_used_exp13} \
                         --output exp13_index/{wildcards.num}_genomes/output 2> {output[1]}
         """
 
@@ -69,7 +69,7 @@ rule build_index_with_two_pass_exp13:
 
 rule gather_data_of_two_pass_exp13:
     input:
-        expand("exp13_index/{num}_genomes/time_and_mem.log", num=range(2,11))
+        expand("exp13_index/{num}_genomes/time_and_mem.log", num=[2,3,4,5,6,7,8,9,10,15,20,30,40,50,60,70,94])
     output:
         "exp13_results/output.csv"
     shell:
