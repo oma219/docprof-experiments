@@ -60,6 +60,9 @@ nums_used_exp12_str = " ".join([str(x) for x in nums_used_exp12])
 
 tmp_mem_used_exp13=config["TEMP_MEM_USED_EXP13"]
 
+num_genera_exp14 = config["NUM_GENERA_EXP14"]
+tmp_mem_used_exp14=config["TEMP_MEM_USED_EXP14"]
+
 ###############################################################################
 # IMPORTANT: Sets the working directory based on configuration parameter, and 
 #            it can be set on command-line using --config DATA_ROOT=""
@@ -83,6 +86,7 @@ include: "rules/exp_10.smk"
 include: "rules/exp_11.smk"
 include: "rules/exp_12.smk"
 include: "rules/exp_13.smk"
+include: "rules/exp_14.smk"
 
 ###############################################################################
 # All rules for each experiment
