@@ -5,7 +5,7 @@
 - This experiment is aimed at making sure that the document array profiles data-structure is computing the correct listings. To do this, I
 compare the listings produced by the data-structure versus those using the $r$-index.
 
-### Experiment 2: Compare the query time and index size to the the $r$-index :rotating_light: (Used in Paper) :rotating_light:
+### Experiment 2: Compare the query time and index size to the the $`r`$-index :rotating_light: (Used in Paper) :rotating_light:
 
 - This experiment simulates reads, extracts MEMs and computes the listings using the $r$-index and the document array profiles. It compares the
 query time and index size for each data-structure.
@@ -31,3 +31,17 @@ and the document array profiles.
 ### Experiment 7: Computes sequence homology across different datasets using ANI :rotating_light: (Used in Paper) :rotating_light:
 
 - Takes in a dataset, computes all-pairs ANI values across datasets and summarize in csv file
+
+### Experiment 8: Analyzes the monotonic increases of the DAP in both directions
+
+### Experiment 9: Analyzes the size of the taxonomic DAP with different size columns
+
+### Experiment 10: Verifies the output results from the taxonomic DAP matches the r-index
+
+### Experiment 11: Tests out the taxonomic DAP using a small taxonomy and plots the results
+
+### Experiment 12: Compares the construction of two-pass, heursitic, and no-heuristic of the DAP
+
+### Experiment 13: Builds progressively larger DAPs over subsets of genomes using two-pass construction and profiles it
+
+### Experiment 14: Extract genera from SILVA and build taxonomic compressed DAP (uses rank file from SILVA)
