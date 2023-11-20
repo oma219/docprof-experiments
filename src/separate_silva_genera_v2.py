@@ -200,8 +200,6 @@ def write_individual_genus_to_file(input_tup):
     genus_num, traversal, genus_to_seq_dict, output_dir = input_tup
     with open(output_dir+f"doc_{genus_num+1}_seq.fa", "w") as out_fd:
         assert traversal in genus_to_seq_dict
-        if len(genus_to_seq_dict[traversal]) == 0:
-            return 0
         for seq in genus_to_seq_dict[traversal]:
             out_fd.write(seq)
     return 1
@@ -210,6 +208,11 @@ def create_filelist(output_dir, num_genera_written):
     with open(output_dir+"filelist.txt", "w") as out_fd:
         for i in range(1, num_genera_written+1):
             out_fd.write(f"{output_dir}doc_{i}_seq.fa {i}\n")
+
+def write_out_doc_to_traversal_file(output_dir, genera_written):
+    with open(output_dir+"doc_to_traversal.txt", "w") as out_fd:
+        for i,traversal,_,_ in genera_written:
+            out_fd.write(f"{i+1} {traversal}\n")
 
 ########################################
 # Section 2: Main method, general helper
@@ -245,16 +248,23 @@ def main(args):
     total_number_of_seqs_at_genera_level = sum([len(genus_to_sequences[key]) for key in genus_to_sequences.keys()])
     print(f"[log] out of a total of {len(seq_headers)}, {total_number_of_seqs_at_genera_level} are specified to genus level.")
 
-    # Step 5: Write out n genera to files
-    genera_to_write = args.num_genera if args.num_genera < len(genera_in_order) else len(genera_in_order)
-    genera_write_list = [(i, genera_in_order[i][0], genus_to_sequences, args.output_dir) for i in range(genera_to_write)]
+    # Step 5: Focus on genera with sequences
+    genera_in_order_with_seq = [tup for tup in genera_in_order if len(genus_to_sequences[tup[0]]) > 0]
+
+    # Step 6: Write out n genera to files
+    genera_to_write = args.num_genera if args.num_genera < len(genera_in_order_with_seq) else len(genera_in_order_with_seq)
+    genera_write_list = [(i, genera_in_order_with_seq[i][0], genus_to_sequences, args.output_dir) for i in range(genera_to_write)]
     
     with mp.Pool(8) as pool:
         res = pool.map(write_individual_genus_to_file, genera_write_list)
     print(f"[log] finished writing {sum(res)} genera to files.")
 
+    # Step 7: Write out the metadata files
     create_filelist(args.output_dir, sum(res))
     print(f"[log] finished writing a filelist.")
+
+    write_out_doc_to_traversal_file(args.output_dir, genera_write_list)
+    print(f"[log] finished writing a map from document id to traversal\n")
     
 
 def parse_arguments():
