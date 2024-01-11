@@ -63,6 +63,15 @@ tmp_mem_used_exp13=config["TEMP_MEM_USED_EXP13"]
 num_genera_exp14 = config["NUM_GENERA_EXP14"]
 tmp_mem_used_exp14=config["TEMP_MEM_USED_EXP14"]
 
+sample_name_exp15 = config["SAMPLE_NAME_EXP15"]
+path_to_read_tax_exp15 = config["PATH_TO_READ_TAXONOMY_EXP15"]
+silva_tax_ranks_exp15 = config["SILVA_TAX_RANKS_EXP15"]
+kraken_db_path_exp15 = config["KRAKEN_DB_EXP15"]
+kraken_nominimizer_db_path_exp15 = config["KRAKEN_NOMINIMIZER_DB_EXP15"]
+pfpdoc_db_exp15 = config["PFPDOC_DB_EXP15"]
+doc_to_trav_exp15 = config["DOC_TO_TRAV_EXP15"]
+trav_to_length_exp15 = config["TRAV_TO_LENGTH_EXP15"]
+
 ###############################################################################
 # IMPORTANT: Sets the working directory based on configuration parameter, and 
 #            it can be set on command-line using --config DATA_ROOT=""
@@ -87,6 +96,8 @@ include: "rules/exp_11.smk"
 include: "rules/exp_12.smk"
 include: "rules/exp_13.smk"
 include: "rules/exp_14.smk"
+include: "rules/exp_15.smk"
+include: "rules/exp_16.smk"
 
 ###############################################################################
 # All rules for each experiment
@@ -120,8 +131,8 @@ include: "rules/exp_14.smk"
 #         "exp5_results/spumoni/csv_files/classification_results.csv"
 
 # Experiment 6:
-rule all:
-    input:
-        "exp6_final_results/spumoni.csv",
-        "exp6_final_results/doclist.csv"
+# rule all:
+#     input:
+#         "exp6_final_results/spumoni.csv",
+#         "exp6_final_results/doclist.csv"
 

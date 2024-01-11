@@ -94,8 +94,25 @@ def traversal_is_unambiguous(traversal, silva_ranks):
     levels = ["domain", "phylum", "class", "order", "family", "genus"]
     for level in levels:
         curr_name = extract_specific_level_from_read_set_traversal(traversal, level)
-        if curr_name not in silva_ranks[level]:
+        # num_matches = sum([curr_name in x for x in silva_ranks[level]])
+        num_matches = sum([curr_name in x for x in silva_ranks[level]])
+
+        #if curr_name not in silva_ranks[level]:
+        if num_matches == 0 or num_matches > 1:
             return False
+        elif curr_name not in silva_ranks[level]:
+            return False
+        else:
+            assert num_matches == 1
+            assert curr_name in silva_ranks[level]
+        
+        # Special case (class = Clostridia)
+        if level == "class" and curr_name == "Clostridia":
+            return False
+        # if level == "class" and curr_name == "Bacilli":
+        #     return False
+        # if level == "order" and curr_name == "Bacillales":
+        #     return False
     return True
 
 ############################################
@@ -165,9 +182,9 @@ def parse_arguments():
     parser.add_argument("--sample", dest="sample_name", help="name of sample (e.g. A500_V12)", required=True)
     parser.add_argument("--silva-taxrank", dest="silva_tax_file", help="path to silva taxrank file (e.g. *txt)", required=True)
     parser.add_argument("--read-taxrank", dest="read_tax_file", help="path to read taxrank file (e.g. seqtax_*.tab)", required=True)
-    parser.add_argument("--human", dest="human_dataset", action="store_true", default=False, help="readset is human-gut")
-    parser.add_argument("--soil", dest="soil_dataset", action="store_true", default=False, help="readset is soil")
-    parser.add_argument("--ocean", dest="ocean_dataset", action="store_true", default=False, help="readset is ocean")
+    # parser.add_argument("--human", dest="human_dataset", action="store_true", default=False, help="readset is human-gut")
+    # parser.add_argument("--soil", dest="soil_dataset", action="store_true", default=False, help="readset is soil")
+    # parser.add_argument("--ocean", dest="ocean_dataset", action="store_true", default=False, help="readset is ocean")
     args = parser.parse_args()
     return args
 
@@ -178,6 +195,7 @@ def check_args(args):
     if not os.path.isfile(args.mate2):
         print("Error: input file 2 provided is not valid.")
         exit(1)
+    
     if not os.path.isdir(args.output_dir):
         print("Error: output directory is not valid.")
         exit(1)
@@ -190,10 +208,10 @@ def check_args(args):
         print("Error: readset taxonomy rank file provided is not valid.")
         exit(1)
     
-    dataset_count = sum([args.human_dataset, args.soil_dataset, args.ocean_dataset])
-    if dataset_count != 1:
-        print("Error: must specify exactly one readset type")
-        exit(1)
+    # dataset_count = sum([args.human_dataset, args.soil_dataset, args.ocean_dataset])
+    # if dataset_count != 1:
+    #     print("Error: must specify exactly one readset type")
+    #     exit(1)
 
 if __name__ == "__main__":
     args = parse_arguments()
